@@ -1,0 +1,118 @@
+{% extends "main/plain.html" %}
+{% load maven %}
+{% load static %}
+{% load assets %}
+{% load crispy_forms_tags %}
+
+{% block head-styles %}    
+<style>
+.title, .title td {
+	font-weight: 900;
+	padding: 5px;
+	color: white;
+	font-size: 28px;
+	line-height: 28px;
+}
+.header {
+	font-size: 28px;
+	line-height: 28px;
+	font-weight: 900;
+}
+.text, li {
+	font-size: 28px;
+	line-height: 28px;
+}
+.small-spacer {
+	height: 20px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% for team in teams %}
+
+<div class="title" style="background-color: {{ team.color|safe }}; -webkit-print-color-adjust: exact;">
+<table style="background-color: {{ team.color|safe }};"><tr style="background-color: {{ team.color|safe }};  -webkit-print-color-adjust: exact;">
+<td style="background-color: {{ team.color|safe }}; -webkit-print-color-adjust: exact;">
+<img style="width: 96px; height: auto; position: relative; top: 0px; left: 0px;" src="{% static 'main/img/Logo2.png' %}">
+</td><td style="padding: 4px; background-color: {{ team.color|safe }}; -webkit-print-color-adjust: exact; text-shadow: 3px 3px 2px rgba(0, 0, 0, 0.8);">
+The
+Red Rock
+Elementary
+Amazing Race
+Escape Room
+Scavenger Hunt
+Rabies Awareness
+Fun Run
+Race for the Cure
+Back to School
+Challenge
+2025
+</td><tr></table>
+</div>
+
+<div style="padding: 10px;">
+
+<div class="header">Team Name:</div>
+<div class="text">{{ team.name }}</div>
+<div class="small-spacer"></div>
+
+<div class="header">Password:</div>
+<div class="text">{{ team.password }}</div>
+<div class="small-spacer"></div>
+
+<div class="header">Website URL:</div>
+<div class="text">http://lostinrockne.com</div>
+<div class="small-spacer"></div>
+
+<div class="header">Team Members:</div>
+<ol>
+{% if team.player1 %}<li>{{ team.player1|safe }}</li>{% endif %}
+{% if team.player2 %}<li>{{ team.player2|safe }}</li>{% endif %}
+{% if team.player3 %}<li>{{ team.player3|safe }}</li>{% endif %}
+{% if team.player4 %}<li>{{ team.player4|safe }}</li>{% endif %}
+{% if team.player5 %}<li>{{ team.player5|safe }}</li>{% endif %}
+{% if team.player6 %}<li>{{ team.player6|safe }}</li>{% endif %}
+</ol>
+<div class="small-spacer"></div>
+
+<div class="header">Beginning a Challenge:</div>
+<div class="text">
+<ol>
+<li>Find the challenge start card (challenge number and name with access code).</li>
+<li>Enter the access code for the challenge in the app.</li>
+<li>Read out load all instructions either on the app or posted in the room for all team members to hear.</li>
+<li>Complete the challenge.</li>
+</ol>
+</div>
+<div class="small-spacer"></div>
+
+<div class="header">During a Challenge:</div>
+<div class="text">
+<ol>
+<li>Answer all challenge questions on your digital scorecard and click "Continue".</li>
+<li>Team members can work together or split up and work on different parts of the challenge independently.</li>
+<li>You cannot use the internet (only your brain).</li>
+<li>When you are finished with a challenge, you must “reset” things the way you found them. You must do this, even if you are the last team to do a challenge.  (This is the only way it is fair for all.)</li>
+</ol>
+</div>
+<div class="small-spacer"></div>
+
+<div class="header">Need Help?</div>
+<div class="text">
+Text "Help" + challenge # (e.g. "Help 3" to me, Rodney, at 512-461-6673).
+</div>
+<div class="small-spacer"></div>
+
+<div class="header">Notes:</div>
+<div class="small-spacer"></div>
+
+</div>
+<div style="page-break-after: always;"></div>
+
+{% endfor %}
+{% endblock %}
+
+{% block post-script %}
+{% endblock %}
+

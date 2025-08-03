@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>The Back to School Challenge</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <link href="site/css/site.css" rel="stylesheet">
+    <link href="site/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+	html {
+  		scroll-behavior: smooth;
+	}
+    html *, body * {
+        box-sizing: border-box;
+        font-size: 16px;
+        padding: 0;
+        margin: 0;
+    }
+    body, html {
+        height: 100%;
+        box-sizing: border-box;
+    }
+	#hero {
+		width: 100%;
+		height: 100vh;
+		background: url("img/Background1.png") top center;
+		background-size: cover;
+		position: relative;
+	}
+	#title {
+		position: absolute; 
+		padding-left: 2vw; 
+		padding-right: 2vw; 
+		margin-left: auto; 
+		margin-right: auto; 
+		width: 100%; 
+		text-align: center; 
+		color: #9d0e0e; 
+		font-weight: 900; 
+		text-shadow: 1px 1px 2px rgba(0,0,0,0.42);
+	}
+	@media only screen and (max-width: 425px) { #title {
+		top: 100px; 
+		font-size: 24px; 
+		line-height: 24px;	
+		text-shadow: 1px 1px 2px rgba(0,0,0,0.42);
+	}}
+	@media only screen and (min-width: 425px) and (max-width: 600px) { #title {
+		top: 100px; 
+		font-size: 26px; 
+		line-height: 26px;	
+		text-shadow: 1px 1px 2px rgba(0,0,0,0.42);
+	}}
+	@media only screen and (min-width: 600px) and (max-width: 1000px) { #title {
+		top: 120px; 
+		font-size: 32px; 
+		line-height: 32px;	
+		text-shadow: 1px 1px 2px rgba(0,0,0,0.42);
+	}}
+	@media only screen and (min-width: 1000px) { #title {
+		top: 140px; 
+		font-size: 40px; 
+		line-height: 40px;	
+		text-shadow: 1px 1px 2px rgba(0,0,0,0.42);
+	}}
+    </style>
+	<script>"use strict"; var IS_ADMIN = false;</script>
+	<script>var SITE_DEBUG = {% site_debug %};</script>
+	<script>var HTTP_STATIC_URL = "{% http_static_url %}";</script>
+	<script>var HTTP_MEDIA_URL = "{% http_media_url %}";</script>
+    <script src="admin/js/vendor/jquery/jquery.js"></script>
+    <script src="site/vendor/jquery/jquery.min.js"></script>
+    <script src="site/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="site/vendor/jquery.easing/jquery.easing.min.js"></script>
+    <script src="site/vendor/jquery.timeago/jquery.timeago.js"></script>
+    <script src="site/vendor/jquery.waypoints/jquery.waypoints.js"></script>
+    <script src="site/vendor/aos/aos.js"></script>
+    <script src="site/vendor/fontawesome/all.js"></script>
+    <script src="site/vendor/moment/moment.min.js"></script>
+    <script src="site/vendor/imgbutton/imgbutton.js"></script>
+    <script src="site/vendor/dialog/dialog.js"></script>
+    <script src="site/vendor/flatpickr/flatpickr.js"></script>
+    <script src="site/js/site.js"></script>
+    <script src="maven/maven-1.2.js"></script>
+</head>
+<body>
+
+    <div class="overlay"></div>
+    <a name="home"></a>
+    <nav id="site-navbar" class="navbar fixed-top navbar-expand-xl navbar-dark bg-dark" style="border-bottom: 2px solid #ccc;">
+        <div class="container-xl">
+
+            <a class="navbar-brand" href="home">
+                <img style="width: 25vw; min-width: 120px; max-width: 150px; height: auto; margin-left: -5px" src="img/Logo1.png">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#page-navbar"
+                aria-controls="page-navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="page-navbar">
+                <ul class="navbar-nav ml-auto">
+                    <li id="nav-item-home" class="nav-item nav-item-section">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li id="nav-item-home" class="nav-item nav-item-section">
+                        <a class="nav-link" href="#">Login</a>
+                    </li>
+                    <li id="nav-item-home" class="nav-item nav-item-section">
+                        <a class="nav-link" href="#">Let's Play!</a>
+                    </li>
+                    <li id="nav-item-home" class="nav-item nav-item-section">
+                        <a class="nav-link" href="#">Results</a>
+                    </li>
+                    <li id="nav-item-home" class="nav-item nav-item-section">
+                        <a class="nav-link" href="#">Logout</a>
+                    </li>
+                    <li id="nav-item-home" class="nav-item nav-item-section">
+                        <a class="nav-link" href="#">Admin</a>
+                    </li>
+                </ul>
+            </div>
+
+
+        </div>
+    </nav>
+    <div id="content">
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+    </p>
+    <p>
+    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+    </p>
+    <p>
+    <a class="btn btn-primary" href="#"><i class="fas fa-cog"></i> Test</a>
+    </p>
+    <div style="height: 200px;"></div>
+    </div>
+    <script>
+	$(document).ready(
+
+    function () {
+
+		// When you start to scroll down, hide the bottom button bar.  Subsequently, when you scroll
+		// all the way to the top, show the bottom button bar.
+        let notYetScrolled = true;
+        function scrollListener() {
+			if ($(document).scrollTop() > 1) 
+			{
+				$(`#BottomButtonBar`).slideUp(500);
+				notYetScrolled = false;
+			} 
+			else 
+			{
+				if (!notYetScrolled) $(`#BottomButtonBar`).slideDown(500);
+			}
+        };
+        $(document).scroll(scrollListener);
+        scrollListener();
+	});
+	</script>
+
+</body>

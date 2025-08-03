@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+{% load assets %}
+{% load crispy_forms_tags %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>The Back to School Challenge</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <link href="{% static 'main/site/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'main/site/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+    <link href="{% static 'main/site/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'main/site/vendor/icofont/icofont.min.css' %}" rel="stylesheet">
+    <link href="{% static 'main/site/vendor/aos/aos.css' %}" rel="stylesheet">
+    <link href="{% static 'main/site/vendor/dialog/dialog.css' %}" rel="stylesheet">
+    <link href="{% static 'main/site/vendor/imgbutton/imgbutton.css' %}" rel="stylesheet">
+    <link href="{% static 'main/site/vendor/flatpickr/flatpickr_material_blue.css' %}" rel="stylesheet">
+    <link href="{% static_reload 'main/site/css/site.css' %}" rel="stylesheet">
+	<link href="{% static_reload 'maven/maven-charcoal.css' %}" rel="stylesheet">
+	<link rel="stylesheet" href="{% static 'main/site/vendor/owl.carousel/assets/owl.carousel.min.css' %}">
+	<link rel="stylesheet" href="{% static 'main/site/vendor/owl.carousel/assets/owl.theme.default.min.css' %}">
+	{% block head-css-link %}{% endblock %}
+	<script>"use strict"; var IS_ADMIN = false;</script>
+	<script>var SITE_DEBUG = {% site_debug %};</script>
+	<script>var HTTP_STATIC_URL = "{% http_static_url %}";</script>
+	<script>var HTTP_MEDIA_URL = "{% http_media_url %}";</script>
+	<script>var HTTP_LOGOUT_URL = "{% url 'team-logout' %}";</script>
+    <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+    <script src="{% static 'main/site/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'main/site/vendor/jquery.easing/jquery.easing.min.js' %}"></script>
+    <script src="{% static 'main/site/vendor/jquery.timeago/jquery.timeago.js' %}"></script>
+    <script src="{% static 'main/site/vendor/jquery.waypoints/jquery.waypoints.js' %}"></script>
+    <script src="{% static 'main/site/vendor/aos/aos.js' %}"></script>
+    <script src="{% static 'main/site/vendor/fontawesome/all.js' %}"></script>
+    <script src="{% static 'main/site/vendor/moment/moment.min.js' %}"></script>
+    <script src="{% static_reload 'main/site/vendor/imgbutton/imgbutton.js' %}"></script>
+    <script src="{% static_reload 'main/site/vendor/dialog/dialog.js' %}"></script>
+    <script src="{% static 'main/site/vendor/flatpickr/flatpickr.js' %}"></script>
+    <script src="{% static_reload 'main/site/js/site.js' %}"></script>
+    <!-- <script src="{% static_reload 'maven/maven-1.2.js' %}"></script> -->
+	<script src="{% static 'main/site/vendor/owl.carousel/owl.carousel.min.js' %}"></script>
+	{% block head-script-link %}{% endblock %}
+	{% block head-script %}{% endblock %}
+	{% block head-styles %}{% endblock %}</head>
+<body>
+    {% block content %}{% endblock %}
+    {% block post-script %}{% endblock %}
+</body>
+</html>

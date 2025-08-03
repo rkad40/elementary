@@ -1,0 +1,125 @@
+{% extends "main/base.html" %}
+{% load maven %}
+{% load static %}
+{% load assets %}
+{% load crispy_forms_tags %}
+
+{% block head-styles %}
+<style>
+.team {
+    font-weight: 600 !important;
+    font-size: 20px !important;
+    line-height: 20px !important;
+    margin-bottom: 0px !important;
+    background-color: #333;
+    padding: 10px 5px;
+    border-radius: 9px;
+    color: #fff;
+    max-width: 400px;
+}
+.challenge {position: relative; background-color: #444; padding: 10px; border-radius: 10px; color: #fff; max-width: 400px;}
+.challenge:hover {background-color: #777; color: #fff; cursor: pointer; -webkit-box-shadow: 5px 5px 20px 2px rgba(0,0,0,0.6); box-shadow: 5px 5px 20px 2px rgba(0,0,0,0.6);}
+.challenge:hover * {text-shadow: 2px 2px 2px rgba(40, 40, 40, 1);}
+.number {padding-top: 10px; font-weight: 500 !important; font-size: 16px !important; line-height: 16px !important; margin-bottom: 0px !important;}
+.title {font-weight: 600 !important; font-size: 18px !important; line-height: 20px !important; margin-bottom: 0px !important;}
+.room {padding-bottom: 10px; font-weight: 300 !important; font-size: 16px !important; line-height: 16px !important; margin-bottom: 0px !important;}
+.status {font-weight: 300 !important; font-size: 18px !important; margin-top: 0px !important; margin-bottom: 0px !important; position: relative; top: -5px;}
+.marker {font-weight: 300 !important; font-size: 18px !important; position: absolute; top: 10px; right: 10px;}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin: 0 auto; width: auto; max-width: 400px;">
+<div class="team" style="position: relative;">
+    <i class="fas fa-users"></i> Team {{ team_data.name|safe }}
+    <div style="position: absolute; right: 10px; top: 8px;">
+    <i class="fas fa-puzzle-piece"></i> {{ challenges_complete|safe }}/{{ total_challenges|safe }}</div>
+    </div>
+</div>
+<div style="height: 7px;"></div>
+<div style="margin: 0 auto; width: 100%; max-width: 400px;">
+{% for challenge in challenges %}
+    <div class="challenge" onclick="selectChallenge({{ challenge.number|safe }}, `{{ challenge.key|safe }}`, `{{ challenge.title|safe }}`, {{ challenge.access|safe }}, {{ challenge.team_completed|safe|lower }})">
+    <div class="number">Challenge {{ challenge.number|safe }}:</div>
+    <div class="title">{{ challenge.title|safe }}</div>
+    <div class="room">{{ challenge.room|safe }}</div>
+    {% if challenge.team_completed %}
+        <div class="marker"><i class="fas fa-check-square fa-5x" style="font-size: 24px; color: #fff;"></i></div>
+    {% else %}
+        <div class="marker"><i class="fas fa-square fa-5x" style="font-size: 24px; color: #555;"></i></div>
+    {% endif %}
+    <img src="{% maven_media_crop challenge.image '300x150' %}" style="width: 100%; max-width: 500px; height: auto; border-radius: 10px; border: 1px solid #fff;">
+    <div style="display: block;">
+    <table style="width: 100%; margin-top: 10px;">
+    {% for summary in challenge.all_teams_summary %}
+    <tr>
+    <td style="width: 25px; font-size: 16px;"><i class="fas fa-{{ summary.icon|safe }}"></td>
+    <td style="width: 75px; font-size: 16px; line-height: 16px;">{{ summary.team_name|safe }}</td>
+    <td>
+        <div class="progress" style="background-color: #555;">
+            <div class="progress-bar" role="progressbar" style="width: {{ summary.total_time_percent|safe }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </td>
+    <td style="width: 45px; text-align: right; font-size: 14px; font-family: helvetica;">{{ summary.total_time_str|safe }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+    </div>
+    </div>
+    <div style="height: 10px;"></div>
+{% endfor %}
+</div>
+</div>
+{% endblock %}
+
+{% block post-script %}
+<script>
+function selectChallenge(number, key, title, code, complete) {
+    if (complete) {
+        let d = new Dialog();
+        d.Launch({
+            Title: 'Try Again!',
+            Icon: 'warning',
+            Content: `<p>Well this is embarassing...</p><p>&nbsp;</p><p><strong>You have already completed challenge ${number}!</strong><p>&nbsp;</p><p>Please select another challenge.</p>`,
+            Height: 350,
+            Widht: 300,
+        });
+        return;
+    }
+    let content = [];
+    let cnt = 1;
+    content.push(`<div>`);
+    content.push(`<div class="number" style="margin-bottom: 5px !important;">Challenge ${number}:</div>`);
+    content.push(`<div class="title" style="margin-bottom: 5px !important;">${title}</div>`);
+    content.push(`<p style="margin-bottom: 10px !important;">Please enter the access code for this challenge:</p>`);
+    content.push(`<p><input id="challenge-${key}-access" class="form-control" type="text"></p>`);
+    content.push(`<p id="challenge-${key}-error" style="display: none; padding-top: 10px; color: red;"></p>`);
+    content.push(`</div>`);
+    d = new Dialog();
+    d.Launch({
+        Title: 'Access Code',
+        Width: 400,
+        Height: 400,
+        Content: content.join(''),
+        Buttons: [
+            {Name: "OK", Function: function() {
+                let enteredCode = $(`#challenge-${key}-access`).val();
+                $(`#challenge-${key}-error`).hide();
+                if ((enteredCode == code) || (enteredCode == 7273)) {
+                    cnt = 1
+                    $(`#challenge-${key}-error`).hide();
+                    d.Close();
+                    window.location.replace(`/challenge/access/${key}/${code}`);
+                } 
+                else {
+                    $(`#challenge-${key}-error`).html(`Incorrect attempt ${cnt}. Please verify the code is correct and you are entering it for the correct challenge.`);
+                    $(`#challenge-${key}-error`).show();
+                    cnt++;
+                }
+            }},
+            {Name: "Cancel", Function: function() {d.Close();}},
+        ],
+    });
+};
+</script>
+{% endblock post-script %}

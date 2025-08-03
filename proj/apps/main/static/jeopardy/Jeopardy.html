@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/jeopardy/inc/dialog/dialog.css">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+		@import url('https://fonts.googleapis.com/css2?family=DM%20Mono&display=swap');
+
+		body {
+			font-family: Roboto, Calibri;
+			font-size: 16px;
+			padding: 0;
+			margin: 0;
+			box-sizing: jeopardy-board;
+			background-color: #1e1e1e;
+		}
+
+		body, html {
+			height: 100%;
+		}
+
+		#jeopardy-board {
+			/* The image used */
+			background-image: url("/static/jeopardy/inc/img/background.png");
+			z-index: 1;
+			/* Full height */
+			height: 100%;
+
+			/* Center and scale the image nicely */
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: cover;
+			position: absolute; 
+			top: 0;
+		}
+
+		#jeopardy-login {
+			position: absolute;
+			top: 0px; /* Header Height */
+			bottom: 0px; /* Footer Height */
+			width: 100%;
+			background-color: #0009A4;
+			/* display: block; */
+			z-index: 1001;
+		}
+
+		table.jeopardy td ,
+		table.jeopardy th {
+			color: #fff;
+			font-size: 24px;
+			text-align: center;
+			background-color: #00203d;
+			border: 10px solid #000; 
+			line-height: 32px;
+			font-weight: 900;
+			color: #fff;
+			padding: 5px;
+		}
+		table.jeopardy th {
+			text-shadow: 4px 4px 4px rgba(0,0,0,1.0);
+		}
+		table.jeopardy td.select {
+			cursor: pointer;
+			background-color: #0009A4;
+			font-size: 40px;
+			color: #eeff00;
+		}
+		table.jeopardy td.select:hover {
+			background-color: #3c46f0;
+		}
+		table.jeopardy td.select.completed:hover {
+			background-color: #0009A4;
+		}
+		table.jeopardy td.total {
+			background-color: #000;
+			font-size: 40px;
+			color: #fff;
+		}
+
+		#category-select {
+			background-color: #1e1e1e;
+			display: none;
+			z-index: 1001;
+			padding: 50px;
+		}
+
+		#category-select * {
+			color: #fff;
+			font-size: 32px;
+			font-weight: 500;
+		}
+
+		#category-select * strong {
+			font-weight: 900;
+		}
+
+		.category-button {
+			border-radius: 10px;
+			padding: 5px;
+			margin: 0px;
+		}
+		.category-button:hover {
+			background-color: #333;
+			cursor: pointer;
+		}
+
+		#quiz-view {
+			position: absolute;
+			top: 0px; /* Header Height */
+			bottom: 0px; /* Footer Height */
+			width: 100%;
+			background-color: #0009A4;
+			display: none;
+			z-index: 1001;
+		}
+
+		#quiz-view .answer {
+			position: relative;
+			top: 0px;
+			font-size: 6vh;
+			line-height: 6vh;
+			padding: 5vh;
+			color: #eeff00;
+			font-weight: bold;
+		}
+
+		#quiz-view .buffer {
+			height: 15vh;
+		}
+
+		#quiz-view .questions {
+			position: absolute;
+			bottom: 0px;
+			padding: 5vh;
+		}
+
+		#quiz-view .question {
+			font-size: 6vh;
+			line-height: 6vh;
+			color: #eeff00;
+			font-weight: bold;
+			margin: 1vh 5vh;
+			padding: 1vh;
+			border-radius: 2vh;
+		}
+
+		#quiz-view .question:hover {
+			background-color: #2f39f8;
+			color: #eeff00;
+			cursor: pointer;
+		}
+
+		#incorrect-view {
+			position: absolute;
+			top: 0px; /* Header Height */
+			bottom: 0px; /* Footer Height */
+			width: 100%;
+			background-color: #b30000;
+			display: none;
+			z-index: 1002;
+			padding-left: 100px;
+			padding-right: 100px;
+		}
+
+		#correct-view {
+			position: absolute;
+			top: 0px; /* Header Height */
+			bottom: 0px; /* Footer Height */
+			width: 100%;
+			background-color: #00660e;
+			display: none;
+			z-index: 1002;
+			padding-left: 100px;
+			padding-right: 100px;
+		}
+
+		#winner-view {
+			position: absolute;
+			top: 0px; /* Header Height */
+			bottom: 0px; /* Footer Height */
+			width: 100%;
+			background-color: #0009A4;
+			display: none;
+			z-index: 1003;
+			padding-left: 100px;
+			padding-right: 100px;
+		}
+
+		#loser-view {
+			position: absolute;
+			top: 0px; /* Header Height */
+			bottom: 0px; /* Footer Height */
+			width: 100%;
+			background-color: #0009A4;
+			display: none;
+			z-index: 1003;
+			padding-left: 100px;
+			padding-right: 100px;
+		}
+
+
+	</style>
+	<script>
+		var app = null;
+	</script>
+</head>
+
+<body>
+	<div id="jeopardy-board">
+		<div style="z-index: 1000; margin-left: auto; margin-right: auto; width: 70%; background-color: #000; margin-top: 15vh; height: 75vh; border-collapse: collapse;">
+			<table class="jeopardy" style="table-layout: fixed; width: 100%; border: 10px solid #000; height: 75vh;">
+			</table>
+		</div>
+	</div>
+	
+	<div id="jeopardy-login">
+		<div style="height: 10vh;"></div>
+		<div style="text-align: center;"><img style="height: 50vh; width: auto;" src="/static/jeopardy/inc/img/login.jpg"></div>
+		<div style="height: 2vh;"></div>
+		<div style="text-align: center;">
+		</div>
+
+		<div style="text-align: center; width: 520px; margin: auto;">
+		  <div style="color: #fff; font-weight: 900;">Pass code:</div>
+		  <input name='entry-passcode' id='entry-passcode' style="width: 100%; height: 38px; border-radius: 5px;">
+		  <div style="height: 20px;"></div>
+		  <div>
+			<button class="btn btn-secondary" onclick="PassCodeAppend('0')" style="width: 100px;">0</button>
+			<button class="btn btn-secondary" onclick="PassCodeAppend('1')" style="width: 100px;">1</button>
+			<button class="btn btn-secondary" onclick="PassCodeAppend('2')" style="width: 100px;">2</button>
+			<button class="btn btn-secondary" onclick="PassCodeAppend('3')" style="width: 100px;">3</button>
+			<button class="btn btn-secondary" onclick="PassCodeAppend('4')" style="width: 100px;">4</button>
+		  </div>
+		  <div style="height: 4px;"></div>
+		  <div>
+			<button class="btn btn-secondary" onclick="PassCodeAppend('5')" style="width: 100px;">5</button>
+			<button class="btn btn-secondary" onclick="PassCodeAppend('6')" style="width: 100px;">6</button>
+			<button class="btn btn-secondary" onclick="PassCodeAppend('7')" style="width: 100px;">7</button>
+			<button class="btn btn-secondary" onclick="PassCodeAppend('8')" style="width: 100px;">8</button>
+			<button class="btn btn-secondary" onclick="PassCodeAppend('9')" style="width: 100px;">9</button>
+		  </div>
+		  <div style="height: 4px;"></div>
+		  <div><button class="btn btn-secondary" onclick="PassCodeClear()" style="width: 517px;">Clear</button></div>
+		  <div style="height: 20px;"></div>
+		  <div><button class="btn btn-primary" style="width:100%;" onclick="Login()">Enter</button></div>
+		</div>
+
+	</div>
+
+	<div id="category-select">
+		<div style="color: #fff;">Select 5 puzzle categories.  When done, click <strong>Start</strong> to begin your game featuring those 5 categories.</div>
+		<div style="height: 50px"></div>
+		<div id="category-list"></div>
+		<div style="height: 50px"></div>
+		<div><button class="btn btn-primary" style="font-size: 20px;" onclick="StartGame()">Start</button></div>
+	</div>
+
+	<div id="quiz-view">
+		<div style="position: relative;">
+			<div class="answer"></div>
+			<div class="buffer"></div>
+			<div class="question1 question"></div>
+			<div class="question2 question"></div>
+			<div class="question3 question"></div>
+			<div class="question4 question"></div>
+		</div>
+	</div>
+	
+	<div id="incorrect-view">
+		<div style="color: #fff; font-size: 10vh; font-weight: bold; margin-top: 18vh; line-height: 12vh; text-align: center;">Incorrect!</div>
+		<div style="height: 5vh;"></div>
+		<div style="color: #fff; font-size: 3vh; text-align: center;">You provided an incorrect question to this clue.</div>
+		<div style="color: #fff; font-size: 3vh; margin-top: 4vh; text-align: center;">The correct question to the answer is:</div>
+		<div id="incorrect-question" style="color: #fff; margin-top: 4vh; font-size: 5vh; text-align: center;"></div>
+		<div style="color: #fff; font-size: 3vh; margin-top: 4vh; text-align: center;">A "Continue" button will appear in 10 seconds.</div>
+		<div style="height: 10vh;"></div>
+		<div id="incorrect-continue" style="text-align: center;"><a class="btn btn-primary btn-lg" href="javascript:continueGame();">Continue</a></div>
+	</div>
+	
+	<div id="correct-view">
+		<div style="color: #fff; font-size: 14vh; font-weight: bold; margin-top: 33vh; text-align: center;">Correct!</div>
+		<div style="height: 10vh;"></div>
+		<div style="text-align: center;"><a class="btn btn-primary btn-lg" href="javascript:continueGame();">Continue</a></div>
+	</div>
+
+	<div id="winner-view">
+		<div style="color: #fff; font-size: 14vh; font-weight: bold; margin-top: 10vh; text-align: center;">Congratulations!</div>
+		<div style="height: 5vh;"></div>
+		<div style="color: #fff; font-size: 3vh; text-align: center;">You have reached the required dollar amount value to clear this stage!</div>
+		<div style="height: 5vh;"></div>
+		<div style="color: #fff; font-size: 3vh; text-align: center;">The pass code to clear this stage is:</div>
+		<div style="height: 2vh;"></div>
+		<div id="exit-code" style="color: #fff; font-size: 10vh; text-align: center; font-weight: bold; font-family: 'Courier New', Courier, monospace"></div>
+		<div style="height: 2vh;"></div>
+		<div style="color: #fff; font-size: 3vh; text-align: center;">Click <strong>Reset</strong> to end and reset the game for the next team.</div>
+		<div style="height: 5vh;"></div>
+		<div style="text-align: center;"><a class="btn btn-primary btn-lg" href="javascript:resetGame();">Reset</a></div>
+	</div>
+
+	<div id="loser-view">
+		<div style="color: #fff; font-size: 14vh; font-weight: bold; margin-top: 10vh; text-align: center;">Hoe. Lee. Cow.</div>
+		<div style="height: 5vh;"></div>
+		<div style="color: #fff; font-size: 3vh; text-align: center;">If this team was any more mentally challenged, you'd all have to be watered twice a week.  Just wow.</div>
+		<div style="height: 5vh;"></div>
+		<div style="color: #fff; font-size: 3vh; text-align: center;">Even though you did not reach the required dollar amount value to clear this stage, you are out of Jeopardy answers to select.  So I guess we are just going to have to pass you anyways. Reluctantly, the pass code to clear this stage is:</div>
+		<div style="height: 2vh;"></div>
+		<div style="color: #fff; font-size: 10vh; text-align: center; font-weight: bold; font-family: 'Courier New', Courier, monospace">39237</div>
+		<div style="height: 2vh;"></div>
+		<div style="color: #fff; font-size: 3vh; text-align: center;">Click <strong>Reset</strong> to end and reset the game for the next team.</div>
+		<div style="height: 5vh;"></div>
+		<div style="text-align: center;"><a class="btn btn-primary btn-lg" href="javascript:resetGame();">Reset</a></div>
+	</div>
+	<script>
+	"use strict";
+	var allCategories = [];
+	var selectedCategories = [];
+	var passCode = '';
+	var exitCode = '';
+	</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <script src="/static/jeopardy/inc/dialog/dialog.js"></script>
+    <script src="/static/jeopardy/inc/site/game.js"></script>
+    <script>
+	"use strict";
+	let DEBUG = false;
+	let results = {};
+	let resultsReset = {
+		total: 0,
+		needed: 45,
+		completed: {},
+		cells: 20,
+		clicked: 0,
+	};
+
+	$(document).ready(function(){Reset();});
+
+	function PassCodeAppend(value)
+	{
+		let passCode = $('#entry-passcode').val();
+		$('#entry-passcode').val(passCode + String(value));
+	};
+
+	function PassCodeClear()
+	{
+		$('#entry-passcode').val('');
+	}
+
+	function Login()
+	{
+		if (DEBUG) 
+		{
+			ListCategories();
+			$(`#category-select`).show();
+			$(`#jeopardy-login`).hide();
+			$('#entry-passcode').val('');
+		}
+		else {
+			if($('#entry-passcode').val() == passCode)
+			{
+				$('#entry-passcode').val('')
+				ListCategories();
+				$(`#category-select`).val('');
+				$(`#jeopardy-login`).hide();
+				$(`#category-select`).show();
+			}
+			else
+			{
+				let d = new Dialog();
+				d.Error("Incorrect pass code.")
+			}
+		}
+	}
+
+	function Reset() 
+	{
+		$('#quiz-view').hide();
+		$('#category-select').hide();
+		$('#correct-view').hide();
+		$('#incorrect-view').hide();
+		$('#jeopardy-board').hide();
+		$('#jeopardy-login').show();
+        $('#exit-code').text(exitCode);
+	};
+	
+	let categoriesSelected = {};
+	let numCategoriesSelected = 0;
+	function ListCategories()
+	{
+		categoriesSelected = {};
+		numCategoriesSelected = 0;
+		let html = [];
+		let i = 0;
+		for (let category of allCategories)
+		{
+			html.push(`<div id="category-select-${i}" data="false" class="category-button category-button-false" onclick="ToggleCategoryButton('${i}')"><span class="icon"><i class="fas fa-toggle-off"></i></span>&nbsp;&nbsp;${category.title}</div>`);
+			categoriesSelected[String(i)] = false;
+			i++;
+		}
+		$(`#category-list`).html(html.join(''))
+	};
+
+	function ToggleCategoryButton(i)
+	{
+		if ($(`#category-select-${i}`).attr('data') == 'false')
+		{
+			$(`#category-select-${i}`).attr('data', 'true');
+			$(`#category-select-${i} .icon`).html(`<i class="fas fa-toggle-on"></i>`);
+			categoriesSelected[Number(i)] = true;
+			numCategoriesSelected++;
+		}
+		else
+		{
+			$(`#category-select-${i}`).attr('data', 'false');
+			$(`#category-select-${i} .icon`).html(`<i class="fas fa-toggle-off"></i>`);
+			categoriesSelected[Number(i)] = false;
+			numCategoriesSelected--;
+		}
+	};
+
+	function StartGame()
+	{
+		if (numCategoriesSelected != 5)
+		{
+			let d = new Dialog();
+			d.Launch({
+				Title: 'Houston, we have a problem...',
+				Icon: 'error',
+				Content: "Yo Einstein? Did you forgot how to count?  I said select FIVE categories, as in 1, 2, 3, 4, 5. It's the number after 4 ... If you hit 6, you went to far. If you are still confused, try selecting ONE category for EACH finger on the hand you pick your nose with.",
+				Height: 280,
+				Width: 500,
+			});
+			return;
+		}
+		let i = 0;
+		selectedCategories = [];
+		for (let category of allCategories)
+		{
+			if (categoriesSelected[Number(i)])
+			{
+				selectedCategories.push(category)
+			}
+			i++;
+		}
+		LoadData();
+	};
+
+	function LoadData()
+	{
+		$('#quiz-view').hide();
+		$('#category-select').hide();
+		$('#correct-view').hide();
+		$('#incorrect-view').hide();
+		$('#jeopardy-board').hide();
+
+		results = JSON.parse(JSON.stringify(resultsReset));
+		let rows = ['', '$200', '$300', '$400', '$500'];
+		let cols = [];
+		let row = [];
+		row.push(`<tr>`);
+		for (let hash of selectedCategories)
+		{
+			cols.push(hash.title);
+			row.push(`<th>${hash.title}</th>`);
+		}
+		row.push(`</tr>`);
+		row = row.join("");
+		let html = [];
+		html.push(row);
+		for (let r = 0; r < 4; r++)
+		{
+			let row = [];
+			row.push(`<tr>`);
+			for (let c = 0; c < cols.length; c++)
+			{
+				row.push(`<td class="select cell-${c}-${r}" data-row="${r}" data-col="${c}" onclick="cellSelect(${c}, ${r});">$${selectedCategories[c]['questions'][r]['value']}</td>`);
+			}
+			row.push(`</tr>`);
+			row = row.join("");
+			html.push(row);
+		}
+		row = [];
+		row.push(`<tr>`);
+		row.push(`<td class="total" colspan="${cols.length}">Team Total: <div id="dollar-total" style="display: inline-block;">$0</div> (Total Needed: $${results.needed})</td>`);
+		row.push(`</tr>`);
+		row = row.join("");
+		html.push(row);
+		html = html.join("\n");;
+		$(`table.jeopardy`).html(html);
+		$('#jeopardy-board').show();
+
+	};
+
+	function correctAnswer(c, r) {
+		// alert('Correct!')
+		$('#correct-view').slideDown();
+		results.total += selectedCategories[c]['questions'][r]['value'];
+		$('#dollar-total').html(`$${results.total}`);
+		$(`.cell-${c}-${r}`).html(`&nbsp;`);
+		$(`.cell-${c}-${r}`).addClass(`completed`);
+		results.completed[`${c}-${r}`] = true;
+		results.clicked++;
+	};
+
+	function incorrectAnswer(c, r) {
+		// alert('Incorrect!')
+		$('#incorrect-view').slideDown();
+		if (DEBUG)
+		{
+			setTimeout(function()  {$('#incorrect-continue').slideDown();}, 100);
+		}
+		else
+		{
+			setTimeout(function()  {$('#incorrect-continue').slideDown();}, 10000);
+		}
+		$(`.cell-${c}-${r}`).html(`&nbsp;`);
+		$(`.cell-${c}-${r}`).addClass(`completed`);
+		results.completed[`${c}-${r}`] = true;
+		results.clicked++;
+	};
+
+	function continueGame() {
+		$('#quiz-view').hide();
+		$('#category-select').hide();
+		$('#correct-view').hide();
+		$('#incorrect-view').hide();
+		$('#incorrect-view').hide();
+		if (results.total >= results.needed) {
+			$('#winner-view').slideDown();
+		}
+		if (results.clicked >= results.cells) {
+			$('#loser-view').slideDown();
+		}
+	};
+
+	function resetGame() {
+		$('#winner-view').hide();
+		$('#loser-view').hide();
+		$('#jeopardy-board').hide();
+		$('#jeopardy-login').show();
+	}
+
+	function cellSelect(c, r) {
+		let key = `${c}-${r}`;
+		if ((key in results.completed) && (results.completed[key]))
+		{
+			return;
+		}
+		$('#incorrect-continue').hide();
+		$('#quiz-view .question').hide();
+		$('#quiz-view').slideDown();
+		$('#quiz-view .answer').html(selectedCategories[c]['questions'][r]['answer']);
+
+		let letter = {0: 'A', 1: 'B', 2: 'C', 3: 'D'}
+
+		for (let i = 0; i < 4; i++)
+		{
+			let correct = selectedCategories[c]['questions'][r]['correct'];
+			let funcName = '';
+			if (correct == letter[i]) 
+			{
+				funcName = 'correctAnswer';
+				$('#incorrect-question').html(selectedCategories[c]['questions'][r]['questions'][i]);
+			}
+			else
+			{
+				funcName = 'incorrectAnswer';
+			}
+			let html = `<div onclick="${funcName}(${c}, ${r});">${selectedCategories[c]['questions'][r]['questions'][i]}</div>`;
+			$(`#quiz-view .question${i+1}`).html(html);
+		}
+
+		let h = $(window).outerHeight() - 
+		(
+		   $('#quiz-view .answer').outerHeight()
+		 + $('#quiz-view .question1').outerHeight()
+		 + $('#quiz-view .question2').outerHeight()
+		 + $('#quiz-view .question3').outerHeight()
+		 + $('#quiz-view .question4').outerHeight()
+		);
+		console.log(h);
+		$('#quiz-view .buffer').innerHeight(h-0.10*$(window).outerHeight());
+		if (DEBUG)
+		{
+			setTimeout(function() {$('#quiz-view .question1').slideDown()}, 300);
+			setTimeout(function() {$('#quiz-view .question2').slideDown()}, 450);
+			setTimeout(function() {$('#quiz-view .question3').slideDown()}, 600);
+			setTimeout(function() {$('#quiz-view .question4').slideDown()}, 750);
+		}
+		else 
+		{
+			setTimeout(function() {$('#quiz-view .question1').slideDown()}, 3000);
+			setTimeout(function() {$('#quiz-view .question2').slideDown()}, 4500);
+			setTimeout(function() {$('#quiz-view .question3').slideDown()}, 6000);
+			setTimeout(function() {$('#quiz-view .question4').slideDown()}, 7500);
+		}
+		//$('#jeopardy-board').slideUp();
+	};
+    </script>
+</body>
+
+</html>

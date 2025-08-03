@@ -1,0 +1,272 @@
+{% extends "main/base.html" %}
+{% load maven %}
+{% load static %}
+{% load assets %}
+{% load crispy_forms_tags %}
+
+{% block head-styles %}
+<style>
+    .stepper-wrapper {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .stepper-item {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+
+        @media (max-width: 768px) {
+            font-size: 12px;
+        }
+    }
+
+    .stepper-item::before {
+        position: absolute;
+        content: "";
+        border-bottom: 2px solid #ccc;
+        width: 100%;
+        top: 20px;
+        left: -50%;
+        z-index: 2;
+    }
+
+    .stepper-item::after {
+        position: absolute;
+        content: "";
+        border-bottom: 2px solid #ccc;
+        width: 100%;
+        top: 20px;
+        left: 50%;
+        z-index: 2;
+    }
+
+    .stepper-item .step-counter {
+        position: relative;
+        z-index: 5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #ccc;
+        margin-bottom: 6px;
+        border: 4px solid #ccc;
+    }
+
+    .stepper-item.active {
+        font-weight: bold;
+    }
+
+    .stepper-item.current .step-counter {
+        background-color: #aaa;
+        color: #000;
+        border: 4px solid #9d0e0e;
+    }
+
+    .stepper-item.completed .step-counter {
+        background-color: #9d0e0e;
+        color: #fff;
+        border: 4px solid #9d0e0e;
+    }
+
+    .stepper-item.completed::after {
+        position: absolute;
+        content: "";
+        border-bottom: 2px solid #9d0e0e;
+        width: 100%;
+        top: 20px;
+        left: 50%;
+        z-index: 3;
+    }
+
+    .stepper-item:first-child::before {
+        content: none;
+    }
+
+    .stepper-item:last-child::after {
+        content: none;
+    }
+
+    .stepper-item.completed .step-name {
+        color: #9d0e0e;
+    }
+
+    .stepper-item .step-name {
+        color: #aaa;
+    }
+
+    .team {
+        font-weight: 600 !important;
+        font-size: 20px !important;
+        line-height: 20px !important;
+        margin-bottom: 0px !important;
+        background-color: #333;
+        padding: 10px 5px;
+        border-radius: 5px;
+        color: #fff;
+    }
+
+    .title {
+        font-weight: 600 !important;
+        font-size: 20px !important;
+        line-height: 20px !important;
+        margin-bottom: 0px !important;
+    }
+
+    .label {
+        font-weight: 600 !important;
+        font-size: 20px !important;
+        line-height: 20px !important;
+        margin-bottom: 0px !important;
+        padding-bottom: 5px;
+    }
+
+    .small {
+        font-weight: 400 !important;
+        font-size: 18px !important;
+        line-height: 18px !important;
+        margin-bottom: 0px !important;
+    }
+
+    input[type=text] {
+        border: 3px solid #ccc !important;
+        border-radius: 10px !important;
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="team" style="position: relative;">
+    <i class="fas fa-users"></i> Team {{ team.name|safe }}
+    <div style="position: absolute; right: 10px; top: 8px;">
+    <i class="fas fa-stopwatch"></i> <div id="stopwatch" style="font-weight: 300; display: inline-block; font-family: monospace; font-size: 16px;">0:00</div>
+    </div>
+</div>
+
+<p>
+    <div class="small">Challenge {{ active_challenge.number|safe }}:</div>
+    <div class="title">{{ active_challenge.title|safe }}</div>
+    <div>
+        <div style="height: 15px;"></div>
+        <div class="small">Task {{ task_data.number|safe }} of {{ num_tasks|safe }}:</div>
+        <div class="title">{{ task_data.title|safe }}</div>
+    </div>
+</p>
+
+<div class="stepper-wrapper">
+    {% for task in active_challenge.tasks %}
+    <div class="stepper-item{% if task.is_completed %} completed{% elif task.is_current %} current{% endif %}">
+        <div class="step-counter"><i class="fas fa-{{ task.icon|safe }}"></i></div>
+        <div class="step-name">{{ task.number|safe }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<p><hr></p>
+<p>
+    <div class="label">Instructions</div>
+</p>
+<p>
+    <div>{{ task_data.text|safe }}</div>
+</p>
+
+<form method="post">
+{% csrf_token %}
+{% for field in form %}
+{% with j=0 %}
+{% if forloop.counter <= num_fields %}
+<div class="fieldWrapper">
+<p>
+{% if field.help_text  == 'pass' %}
+<div class="label"><i class="fas fa-check-circle" style="color: green;"></i>{{ field.label|safe }}</div>
+{% elif field.help_text  == 'fail' %}
+<div class="label"><i class="fas fa-times-circle" style="color: #9d0e0e;"></i>{{ field.label|safe }}</div>
+{% else %}
+<div class="label"><i class="fas fa-question-circle"></i>{{ field.label|safe }}</div>
+{% endif %}
+<div>{{ field|safe }}</div>
+</p>
+</div>
+{% endif %}
+{% endwith %}
+{% endfor %}
+<input type="hidden" name="scroll_pos" class="form-control" id="id_scroll_pos">
+<input type="hidden" name="penalty" class="form-control" id="id_penalty" value="">
+<input class="btn btn-primary" type="submit" value="Continue">
+</form>
+
+{% endblock content %}
+
+{% block post-script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script>
+$(window).scroll(function() {
+    let scrollPos = $(window).scrollTop();
+    $('#id_scroll_pos').val(scrollPos);
+});
+$(document).ready(function(){
+    let startTime = {{ team_challenge_data.start_time|safe }};
+    setInterval(function() {
+        let currentTime = Math.round(new Date().getTime() / 1000);
+        let secondsPassed = currentTime - startTime;
+        let printTime = moment().hour(0).minute(0).second(secondsPassed++).format('m : ss').replace(/\s+/g, '');
+        $('#stopwatch').html(printTime);
+    }, 1000);
+    {% if errors > 0 %}
+    let height = 250;
+    let content = ["{{ insult|safe }} You have entered {{ errors|safe }} incorrect answer{{ errors|pluralize}}."];
+    {% if team_data.penalty.seconds > 0 %}
+    height = 350;
+    content.push('You must now endure a <strong>{{ team_data.penalty.seconds|safe }} second</strong> penalty:')
+    content.push('<div id="penalty-countdown" style="font-family: helvetica; padding-top: 10px; text-align: center; height: 44px; font-weight: 900; font-size: 40px; background-color: #888; color: #fff; border-radius: 10px;">{{ team_data.penalty.seconds|safe }}</div><div id="penalty-ok" style="display: none;">Penalty time complete.  Click <strong>OK</strong> to continue.</div>');
+    {% endif %}
+    let d0 = new Dialog();
+    d0.Launch({
+        Title: 'Uh, Try Again ...',
+        Icon: 'error',
+        Width: 320,
+        Height: height,
+        Content: "<p>" + content.join("</p><p>&nbsp;</p><p>") + "</p>",
+        Buttons: [
+            {Name: "OK", Function: function() {closeErrorDialog(d0);} },
+        ],
+        OnClose: function(){closeErrorDialog(d0);},
+    });
+    setTimeout(function() {countDown(d0);}, 1000);
+    {% endif %}
+});
+
+function countDown(d) {
+    let c = parseInt($('#penalty-countdown').html());
+    c -= 1;
+    $('#penalty-countdown').html(c);
+    if (c > 0) {
+        setTimeout(function() {countDown(d);}, 1000);
+    }
+    if (c == 0) {
+        $('#penalty-countdown').hide();
+        $('#penalty-ok').show();
+    }
+};
+
+function closeErrorDialog(d) {
+    {% if errors > 0 and team_data.penalty.seconds > 0 %}
+    let c = parseInt($('#penalty-countdown').html());
+    if (c > 0) {
+        let e = new Dialog();
+        e.Warning("Nice try, but nope! Your penalty time has not yet expired...");
+        return;
+    }
+    {% endif %}
+    d.Close();
+    $(window).scrollTop({{ scroll|safe }});
+}
+</script>
+{% endblock %}
